@@ -1,5 +1,6 @@
 package edu.eci.arsw.highlandersim;
 
+import edu.eci.arsw.primefinder.PrimeFinderThread;
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.util.LinkedList;
@@ -66,7 +67,7 @@ public class ControlFrame extends JFrame {
         final JButton btnStart = new JButton("Start");
         btnStart.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-
+            Immortal.control = true;
                 immortals = setupInmortals();
 
                 if (immortals != null) {
@@ -74,9 +75,9 @@ public class ControlFrame extends JFrame {
                         im.start();
                     }
                 }
-
+               
                 btnStart.setEnabled(false);
-
+              output.setText("I'm Fighting");
             }
         });
         toolBar.add(btnStart);
@@ -85,17 +86,30 @@ public class ControlFrame extends JFrame {
         btnPauseAndCheck.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
 
-                /*
-				 * COMPLETAR
-                 */
+                     
+                
                 int sum = 0;
+              
+                //System.out.println("Detuve la pelea");
                 for (Immortal im : immortals) {
+                    
                     sum += im.getHealth();
+                    synchronized(Immortal.lock){
+                        Immortal.lock.notifyAll();
+                                
+                    }
+                  
+                     
+          
+         
+                    
+                   
                 }
 
                 output.setText(immortals.toString() + ". Sum:" + sum);
 
             }
+            
         });
         toolBar.add(btnPauseAndCheck);
 
@@ -116,12 +130,22 @@ public class ControlFrame extends JFrame {
         toolBar.add(lblNumOfImmortals);
 
         numOfImmortals = new JTextField();
-        numOfImmortals.setText("3");
+        numOfImmortals.setText("10000");
         toolBar.add(numOfImmortals);
         numOfImmortals.setColumns(10);
 
         JButton btnStop = new JButton("STOP");
+        btnStop.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+              Immortal.control = false;
+              output.setText("Gracias por jugar el mejor juego del mundo !");
+               
+             btnStart.setEnabled(true); 
+            }
+        });
         btnStop.setForeground(Color.RED);
+       
         toolBar.add(btnStop);
 
         JScrollPane scrollPane = new JScrollPane();
